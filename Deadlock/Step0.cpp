@@ -11,7 +11,7 @@ int main() {
     return 0;
 }
 
-pid_t Spawning_forks(pid_t p_id, int gen, int spawn_children){
+void Spawning_forks(pid_t p_id, int gen, int spawn_children){
     // for (int i=0;i<INFINITE_FORK;i++){
     //     pid_t p_id = fork();
     //     pid_t parent = p_id;
@@ -23,18 +23,18 @@ pid_t Spawning_forks(pid_t p_id, int gen, int spawn_children){
         //     Spawning_forks(p_id, gen);
         // }
     // }
-    for (int i=0;i<INFINITE_FORK;i++){
         if(spawn_children) return;
         else{
             spawn_children = 1;
             p_id = fork();
-            if(p_id){
+            int parent_gen = gen;
+            if(p_id == 0){
+                gen = parent_gen + 1;
                 Spawning_forks(p_id, gen, spawn_children);
             }
-            else if(!p_id){
-                Spawning_forks(p_id, gen, spawn_children);
+            else{
+                cout<<"Spawn Failed of gen = " << gen;
             }
             
-        }
     }
 }
