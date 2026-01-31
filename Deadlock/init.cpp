@@ -101,7 +101,34 @@ class PID1ctrller{
 
 
         }
-        
+
+    }
+
+    void child_tantrum_behaviour(){
+        // if child gets parent;s vlocked signals
+        // it will block it asw.
+
+        this_thread::sleep_for(chrono::milliseconds(2));
+
+        PID1ctrller childcontroller(max);
+
+        childcontroller.cur_process = 1;
+
+        childcontroller.spanwer_ahh(2);
+
+        // Instead of crazyyy spawning
+        // i went for exponential growth
+        // so as to define it by depth
+
+        while(true){
+
+            pause()
+            // heheheh fun part
+            // this will wait for the signal
+            // but the signal will never come 
+            // cause i blocked it
+        }
+
     }
 
 };
