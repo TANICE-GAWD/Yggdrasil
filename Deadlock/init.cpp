@@ -21,7 +21,7 @@
 #include <chrono>
 using namespace std;
 
-//STEP 0
+// STEP 0
 class PID1ctrller{
     private:
     int max;
@@ -132,6 +132,7 @@ class PID1ctrller{
     }
 
 
+    // STEP 4
     void Atackkk(){
         cout << "Target max processes =" << max;
 
@@ -145,11 +146,25 @@ class PID1ctrller{
         while(true){
             this_thread::sleep_for(chrono::seconds(60));
         }
-
-
-
-
     }
 
 
 };
+
+int main(int argc, char* argv[]){
+
+    int max = 1000;
+    if(argc>1){
+        max = atoi(argv[1]);
+    }
+    if(max < 10){
+        cerr<<"man gimme more processes";
+    }
+
+    PID1ctrller controller(max);
+    controller.Atackkk();
+
+    return 0;
+
+
+}
