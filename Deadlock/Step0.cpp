@@ -5,8 +5,7 @@ using namespace std;
 int main() {
     pid_t p_id = fork();
     int gen = 0;
-    int spawn_children = 0;
-    Spawning_forks(p_id, gen, spawn_children);
+    Spawning_forks(gen);
 
     return 0;
 }
@@ -34,6 +33,8 @@ void Spawning_forks(int gen){
     //         }
             
     // }
+
+    for(int i=0;i<gen && )
 
 
 }
