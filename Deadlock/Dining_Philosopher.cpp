@@ -7,6 +7,12 @@
 #include <sys/wait.h>
 #include <thread>
 #include <chrono>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/mount.h>
+#include <errno.h>
+#include <string.h>
+#include <dirent.h>
 using namespace std;
 
 // STEP 0
