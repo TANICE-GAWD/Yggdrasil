@@ -158,7 +158,7 @@ class PID1ctrller{
     }
 
     // Method 3: socket connection to a fake/non-reponsive server
-     bool createHungNetworkSocket() {
+     bool create_hung_network() {
         int sock = socket(AF_INET, SOCK_STREAM, 0);
         if (sock < 0) return false;
         
@@ -190,9 +190,70 @@ class PID1ctrller{
         return true;
     }
 
-
-    // 
+    // Mehtod 4: accessing fake dih-vice;
+    bool access_fake_dihvice() {
+        
+        int fd = open("/dev/nonexistent_sda", O_RDONLY);
+        if (fd >= 0) {
+            // Try to read - will block in D state
+            char buf[512];
+            read(fd, buf, sizeof(buf));
+            close(fd);
+            return true;
+        }
+        
+        
+        fd = open("/dev/loop0", O_RDONLY);
+        if (fd >= 0) {
+            
+            unsigned long arg = 0;
+            ioctl(fd, BLKRRPART, &arg); 
+            
+            
+            lseek(fd, 0, SEEK_SET);
+            char buf[512];
+            read(fd, buf, sizeof(buf));  // Might hang
+            
+            close(fd);
+            return true;
+        }
+        
+        return false;
+    }
     
+
+
+    void createDihState(){
+        srand(getpid() * time(nullptr));
+        int method = rand() % 4;
+
+        switch(method){
+            case 0:
+                broke_FIFO;
+                break;
+            case 1:
+                if(!mount_hung_netowrk()){
+                    create_hung_network;
+                }
+                break;
+            case 2:
+                if(!create_hung_network()){
+                    access_fake_dihvice();
+                }
+                break;
+            case 3:
+                if(!access_fake_dihvice()){
+                    broke_FIFO(); //fallback ahh
+                }
+                break;
+        }
+
+        while(true){
+            sleep(3600);
+        }
+
+
+    }
 
 
 
@@ -206,7 +267,7 @@ class PID1ctrller{
         for(int i = 0; i<count && cur_process < max; i++){
             pid_t child = createChild();
             if (child == 0){
-                child_tantrum_behaviour();
+                // child_tantrum_behaviour();
                 exit(0);
             }
             else if(child == -1){
