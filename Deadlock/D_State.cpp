@@ -13,9 +13,34 @@
 #include <errno.h>
 #include <string.h>
 #include <dirent.h>
+#include <sys/sysmacros.h>
 using namespace std;
 
-// STEP 0
+class DihStateCreator{ //Dead State Creator
+    private:
+    static bool mount_created;
+    static const char* mount_path;
+
+    public:
+    DihStateCreator(){}
+
+    bool broke_mount(){
+        mkdir("/tmp/broken_file_dir",0700);
+
+        if(mount("none","/tmp/broken_file_dir", "tmpfs", 0, "size=1M") == -1){
+            cout<<strerror(errno);
+        }
+
+        mknod("/tmp/broken_fire_dir/dih_device_fake", S_IFBLK | 0600, makedev(999, 999));
+    }
+
+
+
+};
+
+
+
+
 class PID1ctrller{
     private:
     int max;
