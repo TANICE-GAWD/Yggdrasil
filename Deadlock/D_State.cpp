@@ -40,7 +40,7 @@ class PID1ctrller{
     bool pls_pls_pls_stop;
 
     void createDihState();
-    bool mound_hung_netowrk();
+    bool mount_hung_netowrk();
     bool create_hung_network();
     bool access_fake_dihvice();
 
@@ -73,6 +73,17 @@ class PID1ctrller{
         signal(SIGCHLD, SIG_IGN); // ignore ts so that it cant reap Z processes
     }
 
+    void spawner_of_zombies(){ 
+        pid_t pid = fork();
+        if(pid == 0){
+            createDihState();
+            exit(0);
+        }
+        else if(pid>0){
+            cur_process++;
+        }
+    }
+
 
 
     // STEP 1
@@ -83,8 +94,10 @@ class PID1ctrller{
             cur_process++;
             return cur_born; //pid of child
         }
-        else if(cur_born=0){
-            init_child_P();
+        else if(cur_born==0){
+            // init_child_P();
+            spawner_of_zombies();
+            child_tantrum_behaviour();
             return 0;
         }
         else{
@@ -100,6 +113,45 @@ class PID1ctrller{
         // but I want zombies
         // hehehhehe
     }
+
+
+
+    // Method 1: dead fifo
+
+    void broke_FIFO(){
+        const char* fifo = "/tmp/dead_fifo";
+        mkfifo(fifo, 0666);
+
+        int fd = open(fifo, O_RDONLY | O_NONBLOCK);
+        if(fd>=0){
+            char bufuuu[1];
+            read(fd, bufuuu, 1);
+            close(fd);
+
+        }
+        unlink(fifo);
+    }
+
+    // Method 2: mount fake network share
+
+    bool mount_hung_network(){
+        const char* sauce = "192.168.254.254:/nonexistent";
+        const char* target = "/mnt/hung_mount";
+
+        mkdir(target, 0755);
+
+        if (mount(sauce, target, "nfs", 0, "timeo=100000,retrans=1000000") == -1) {
+            
+            return false;
+        }
+    }
+
+
+
+
+
+
+
 
 
     // STEP 3
