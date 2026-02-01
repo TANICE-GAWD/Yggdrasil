@@ -142,11 +142,57 @@ class PID1ctrller{
 
         if (mount(sauce, target, "nfs", 0, "timeo=100000,retrans=1000000") == -1) {
             
-            return false;
+            return false; //try to connect to fake sauce
         }
+
+        // anyhowwwww. jst anyhowww the mount succeeds,
+        //imma try to access it
+
+        int fd = open("/mnt/hung_mount/test", O_RDONLY);
+        if (fd>0){
+            char bufuuu[1];
+            read(fd, bufuuu, 1); // will hang
+            close(fd);
+        }
+        return true;
+    }
+
+    // Method 3: socket connection to a fake/non-reponsive server
+     bool createHungNetworkSocket() {
+        int sock = socket(AF_INET, SOCK_STREAM, 0);
+        if (sock < 0) return false;
+        
+
+        int flags = fcntl(sock, F_GETFL, 0);
+        fcntl(sock, F_SETFL, flags & ~O_NONBLOCK);
+        
+        
+        struct sockaddr_in addr;
+        memset(&addr, 0, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(9999);
+        inet_pton(AF_INET, "192.168.254.254", &addr.sin_addr);
+        
+        // Set a very long timeout (but it won't help hehehehehe)
+        struct timeval timeout;
+        timeout.tv_sec = 1000000;
+        timeout.tv_usec = 0;
+        setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+        
+        
+        connect(sock, (struct sockaddr*)&addr, sizeof(addr));
+        
+        
+        char data[1] = {'X'};
+        send(sock, data, 1, 0);
+        
+        close(sock);
+        return true;
     }
 
 
+    // 
+    
 
 
 
