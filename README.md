@@ -265,7 +265,3 @@ This is an offensive-research / educational project. It is meant to be run only 
 
 ---
 
-## Reference
-
-- DeepWiki index: https://deepwiki.com/TANICE-GAWD/Yggdrasil
-- Source: this repository, in `Deadlock/`
